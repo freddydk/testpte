@@ -57,13 +57,13 @@ jobs:
 
       - name: Initialize the workflow
         id: init
-        uses: freddydk/AL-Go/Actions/WorkflowInitialize@eb9ceb4a463191885c5c25a049ea76fb10e0e032
+        uses: freddydk/AL-Go-Actions/WorkflowInitialize@nytest
         with:
           shell: powershell
           eventId: "DO0102"
 
       - name: Read settings
-        uses: freddydk/AL-Go/Actions/ReadSettings@eb9ceb4a463191885c5c25a049ea76fb10e0e032
+        uses: freddydk/AL-Go-Actions/ReadSettings@nytest
         if: github.event.inputs.useGhTokenWorkflow == 'true'
         with:
           shell: powershell
@@ -71,7 +71,7 @@ jobs:
           get: keyVaultName,ghTokenWorkflowSecretName
 
       - name: Read secrets
-        uses: freddydk/AL-Go/Actions/ReadSecrets@eb9ceb4a463191885c5c25a049ea76fb10e0e032
+        uses: freddydk/AL-Go-Actions/ReadSecrets@nytest
         if: github.event.inputs.useGhTokenWorkflow == 'true'
         env:
           secrets: ${{ toJson(secrets) }}
@@ -94,7 +94,7 @@ jobs:
           Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "ghToken=$ghToken"
 
       - name: Creating a new test app
-        uses: freddydk/AL-Go/Actions/CreateApp@eb9ceb4a463191885c5c25a049ea76fb10e0e032
+        uses: freddydk/AL-Go-Actions/CreateApp@nytest
         with:
           shell: powershell
           token: ${{ steps.CalculateToken.outputs.ghToken }}
@@ -110,7 +110,7 @@ jobs:
 
       - name: Finalize the workflow
         if: always()
-        uses: freddydk/AL-Go/Actions/WorkflowPostProcess@eb9ceb4a463191885c5c25a049ea76fb10e0e032
+        uses: freddydk/AL-Go-Actions/WorkflowPostProcess@nytest
         with:
           shell: powershell
           eventId: "DO0102"
