@@ -41,13 +41,13 @@ jobs:
 
       - name: Initialize the workflow
         id: init
-        uses: freddydk/AL-Go-Actions/WorkflowInitialize@nytest
+        uses: freddydk/AL-Go/Actions/WorkflowInitialize@defb0c16ccda293522c177ce930c6f59e7226501
         with:
           shell: powershell
           eventId: "DO0096"
 
       - name: Read settings
-        uses: freddydk/AL-Go-Actions/ReadSettings@nytest
+        uses: freddydk/AL-Go/Actions/ReadSettings@defb0c16ccda293522c177ce930c6f59e7226501
         if: github.event.inputs.useGhTokenWorkflow == 'true'
         with:
           shell: powershell
@@ -55,7 +55,7 @@ jobs:
           get: keyVaultName,ghTokenWorkflowSecretName
 
       - name: Read secrets
-        uses: freddydk/AL-Go-Actions/ReadSecrets@nytest
+        uses: freddydk/AL-Go/Actions/ReadSecrets@defb0c16ccda293522c177ce930c6f59e7226501
         if: github.event.inputs.useGhTokenWorkflow == 'true'
         env:
           secrets: ${{ toJson(secrets) }}
@@ -78,7 +78,7 @@ jobs:
           Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "ghToken=$ghToken"
 
       - name: Increment Version Number
-        uses: freddydk/AL-Go-Actions/IncrementVersionNumber@nytest
+        uses: freddydk/AL-Go/Actions/IncrementVersionNumber@defb0c16ccda293522c177ce930c6f59e7226501
         with:
           shell: powershell
           token: ${{ steps.CalculateToken.outputs.ghToken }}
@@ -89,7 +89,7 @@ jobs:
   
       - name: Finalize the workflow
         if: always()
-        uses: freddydk/AL-Go-Actions/WorkflowPostProcess@nytest
+        uses: freddydk/AL-Go/Actions/WorkflowPostProcess@defb0c16ccda293522c177ce930c6f59e7226501
         with:
           shell: powershell
           eventId: "DO0096"

@@ -78,14 +78,14 @@ jobs:
             lfs: true
 
         - name: Read settings
-          uses: freddydk/AL-Go-Actions/ReadSettings@nytest
+          uses: freddydk/AL-Go/Actions/ReadSettings@defb0c16ccda293522c177ce930c6f59e7226501
           with:
             shell: ${{ inputs.shell }}
             parentTelemetryScopeJson: ${{ inputs.parentTelemetryScopeJson }}
             project: ${{ inputs.project }}
 
         - name: Read secrets
-          uses: freddydk/AL-Go-Actions/ReadSecrets@nytest
+          uses: freddydk/AL-Go/Actions/ReadSecrets@defb0c16ccda293522c177ce930c6f59e7226501
           env:
             secrets: ${{ toJson(secrets) }}
           with:
@@ -95,7 +95,7 @@ jobs:
             secrets: ${{ inputs.secrets }}
 
         - name: Determine ArtifactUrl
-          uses: freddydk/AL-Go-Actions/DetermineArtifactUrl@nytest
+          uses: freddydk/AL-Go/Actions/DetermineArtifactUrl@defb0c16ccda293522c177ce930c6f59e7226501
           id: determineArtifactUrl
           with:
             shell: ${{ inputs.shell }}
@@ -113,7 +113,7 @@ jobs:
 
         - name: Download Project Dependencies
           id: DownloadProjectDependencies
-          uses: freddydk/AL-Go-Actions/DownloadProjectDependencies@nytest
+          uses: freddydk/AL-Go/Actions/DownloadProjectDependencies@defb0c16ccda293522c177ce930c6f59e7226501
           with:
             shell: ${{ inputs.shell }}
             project: ${{ inputs.project }}
@@ -122,7 +122,7 @@ jobs:
 
         - name: Run pipeline
           id: RunPipeline
-          uses: freddydk/AL-Go-Actions/RunPipeline@nytest
+          uses: freddydk/AL-Go/Actions/RunPipeline@defb0c16ccda293522c177ce930c6f59e7226501
           env:
             BuildMode: ${{ inputs.buildMode }}
           with:
@@ -138,7 +138,7 @@ jobs:
         - name: Sign
           if: inputs.signArtifacts && env.doNotSignApps == 'False' && env.keyVaultCodesignCertificateName != ''
           id: sign
-          uses: freddydk/AL-Go-Actions/Sign@nytest
+          uses: freddydk/AL-Go/Actions/Sign@defb0c16ccda293522c177ce930c6f59e7226501
           with:
             shell: ${{ needs.Initialization.outputs.githubRunnerShell }}
             azureCredentialsJson: ${{ secrets.AZURE_CREDENTIALS }}
@@ -148,7 +148,7 @@ jobs:
 
         - name: Calculate Artifact names
           id: calculateArtifactsNames
-          uses: freddydk/AL-Go-Actions/CalculateArtifactNames@nytest
+          uses: freddydk/AL-Go/Actions/CalculateArtifactNames@defb0c16ccda293522c177ce930c6f59e7226501
           if: success() || failure()
           with:
             shell: ${{ inputs.shell }}
@@ -235,7 +235,7 @@ jobs:
         - name: Analyze Test Results
           id: analyzeTestResults
           if: success() || failure()
-          uses: freddydk/AL-Go-Actions/AnalyzeTests@nytest
+          uses: freddydk/AL-Go/Actions/AnalyzeTests@defb0c16ccda293522c177ce930c6f59e7226501
           with:
             shell: ${{ inputs.shell }}
             parentTelemetryScopeJson: ${{ inputs.parentTelemetryScopeJson }}
@@ -243,7 +243,7 @@ jobs:
 
         - name: Cleanup
           if: always()
-          uses: freddydk/AL-Go-Actions/PipelineCleanup@nytest
+          uses: freddydk/AL-Go/Actions/PipelineCleanup@defb0c16ccda293522c177ce930c6f59e7226501
           with:
             shell: ${{ inputs.shell }}
             parentTelemetryScopeJson: ${{ inputs.parentTelemetryScopeJson }}
