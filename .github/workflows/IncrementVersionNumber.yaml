@@ -41,55 +41,38 @@ jobs:
 
       - name: Initialize the workflow
         id: init
-        uses: freddydk/AL-Go/Actions/WorkflowInitialize@defb0c16ccda293522c177ce930c6f59e7226501
+        uses: freddydk/AL-Go/Actions/WorkflowInitialize@main
         with:
           shell: powershell
           eventId: "DO0096"
 
       - name: Read settings
-        uses: freddydk/AL-Go/Actions/ReadSettings@defb0c16ccda293522c177ce930c6f59e7226501
-        if: github.event.inputs.useGhTokenWorkflow == 'true'
+        uses: freddydk/AL-Go/Actions/ReadSettings@main
         with:
           shell: powershell
-          parentTelemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
-          get: keyVaultName,ghTokenWorkflowSecretName
 
       - name: Read secrets
-        uses: freddydk/AL-Go/Actions/ReadSecrets@defb0c16ccda293522c177ce930c6f59e7226501
-        if: github.event.inputs.useGhTokenWorkflow == 'true'
-        env:
-          secrets: ${{ toJson(secrets) }}
+        id: ReadSecrets
+        uses: freddydk/AL-Go/Actions/ReadSecrets@main
         with:
           shell: powershell
-          parentTelemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
-          settingsJson: ${{ env.Settings }}
-          secrets: 'ghTokenWorkflow=${{ env.GHTOKENWORKFLOWSECRETNAME }}'
-
-      - name: CalculateToken
-        id: CalculateToken
-        env:
-          useGhTokenWorkflow: ${{ github.event.inputs.useGhTokenWorkflow }}
-        run: |
-          if ($env:useGhTokenWorkflow -eq 'true') {
-            $ghToken = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($env:GHTOKENWORKFLOW))
-          } else {
-            $ghToken = '${{ secrets.GITHUB_TOKEN }}'
-          }
-          Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "ghToken=$ghToken"
+          gitHubSecrets: ${{ toJson(secrets) }}
+          getSecrets: 'TokenForPush'
+          useGhTokenWorkflowForPush: '${{ github.event.inputs.useGhTokenWorkflow }}'
 
       - name: Increment Version Number
-        uses: freddydk/AL-Go/Actions/IncrementVersionNumber@defb0c16ccda293522c177ce930c6f59e7226501
+        uses: freddydk/AL-Go/Actions/IncrementVersionNumber@main
         with:
           shell: powershell
-          token: ${{ steps.CalculateToken.outputs.ghToken }}
+          token: ${{ steps.ReadSecrets.outputs.TokenForPush }}
           parentTelemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
           project: ${{ github.event.inputs.project }}
           versionNumber: ${{ github.event.inputs.versionNumber }}
           directCommit: ${{ github.event.inputs.directCommit }}
-  
+
       - name: Finalize the workflow
         if: always()
-        uses: freddydk/AL-Go/Actions/WorkflowPostProcess@defb0c16ccda293522c177ce930c6f59e7226501
+        uses: freddydk/AL-Go/Actions/WorkflowPostProcess@main
         with:
           shell: powershell
           eventId: "DO0096"
